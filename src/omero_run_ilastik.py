@@ -257,6 +257,7 @@ if __name__ == '__main__':
 
         for counter, image_root_name in enumerate(image_root_names):
             logger.info(f'Analyzing image {image_root_name}')
+            print(f'Processing image {counter+1}/{len(image_root_names)}: {image_root_name}')
 
             try:
                 mip_image = conn.getObject('Image', images_names_ids[f'{image_root_name}_MIP'])
