@@ -323,6 +323,8 @@ if __name__ == '__main__':
                 # Calculate object properties on the objects
                 object_labels = segment_channel(channel=prob_data[object_ch[1]], threshold=segmentation_thr[object_ch[1]])
                 object_properties = compute_channel_spots_properties(channel=aip_data[object_ch[0]], label_channel=object_labels)
+                # we want to sort the properties by descending area
+                object_properties.sort(key=lambda x: x["area"], reverse=True)
                 object_df = pd.DataFrame(object_properties)
 
                 # Calculate properties of the background
