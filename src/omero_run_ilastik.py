@@ -68,6 +68,7 @@ lower_correction_factors = [
     1.0,
     1.0,
 ]
+SIZE_LIMIT = 300
 
 
 def run_ilastik(ilastik_path, input_path, model_path):
@@ -331,6 +332,41 @@ if __name__ == '__main__':
                 bg_labels = segment_channel(channel=prob_data[bg_ch[1]], threshold=segmentation_thr[bg_ch[1]])
                 bg_properties = compute_channel_spots_properties(channel=aip_data[bg_ch[0]], label_channel=bg_labels)
                 bg_df = pd.DataFrame(bg_properties)
+
+                # Save objects as masks associated to the MIP image
+                masks = omero.create_shape_mask(
+                    object_labels.astype(bool),
+                    c_pos=object_ch[0],
+                )
+                mask_roi = omero.create_roi(
+                    connection=conn,
+                    image=mip_image,
+                    shapes=masks,
+                    name=f'{mip_image.getName()}_ROI',
+                )
+                # Save points in the center with a color code related to the object area
+                points_ids = []
+                for i, prop in enumerate(object_properties):
+                    if prop["area"] > SIZE_LIMIT:
+                        point_color = (255, 0, 0, 120)
+                    else:
+                        point_color = (0, 255, 0, 120)
+                    point = omero.create_shape_point(
+                        x_pos=prop["centroid_x"],
+                        y_pos=prop["centroid_y"],
+                        stroke_color=point_color,
+                        stroke_width=10,
+                        name=f"label: {prop['label']}; area: {prop['area']}"
+                    )
+                    point_roi = omero.create_roi(
+                        connection=conn,
+                        image=mip_image,
+                        shapes=[point],
+                        name=f"label: {prop['label']}; area: {prop['area']}",
+                    )
+                    points_ids.append(point_roi.getId())
+
+                object_df["point_id"] = points_ids
 
                 # Save dataframes as csv attachments to the images
                 object_df.to_csv(f'{TEMP_DIR}/ch{object_ch[0]}_object_df.csv')
