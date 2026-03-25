@@ -485,7 +485,7 @@ def create_image_from_numpy_array(connection,
                                         )
 
         except Exception as e:
-            print(f"Error uploading roi:{new_image.getId()._val}")
+            print(f"Error uploading roi:{new_image.getId()}")
             zct_tile_list = _get_tile_list(zct_list, data.shape, (max_plane_size[0] * 2, 1))
             for t_i, tile_coord in enumerate(zct_tile_list):
                 # print(f"Uploading tile {t_i+1} / {len(zct_tile_list)}")
