@@ -1,6 +1,5 @@
 # OMERO imports
 import omero.gateway as gw
-import omero
 from omero.constants import metadata, namespaces
 from omero import model
 from omero.model import enums, LengthI
@@ -1009,23 +1008,45 @@ def create_shape_polygon(points_list, z_pos, t_pos,
     return polygon
 
 
-def create_shape_mask(mask_array, x_pos, y_pos, z_pos, t_pos,
+def create_shape_mask(mask_array, z_pos=None, c_pos=None, t_pos=None,
                       mask_name=None,
                       fill_color=(0, 255, 0, 120)):
-    mask = model.MaskI()
-    mask.setX(rtypes.rdouble(x_pos))
-    mask.setY(rtypes.rdouble(y_pos))
-    mask.setTheZ(rtypes.rint(z_pos))
-    mask.setTheT(rtypes.rint(t_pos))
-    mask.setWidth(rtypes.rdouble(mask_array.shape[0]))
-    mask.setHeight(rtypes.rdouble(mask_array.shape[1]))
-    mask.setFillColor(rtypes.rint(_rgba_to_int(*fill_color)))
-    if mask_name:
-        mask.setTextValue(rtypes.rstring(mask_name))
-    # mask_packed = np.packbits(mask_array)  # TODO: raise error when not boolean array
-    # mask.setBytes(mask_packed.tobytes())
-    # mask.setBytes(np.packbits(np.asarray(mask_array, dtype=int)))
-    mask.setBytes(np.packbits(mask_array))
+    if len(mask_array.shape) != 2:
+        raise ValueError("Mask array must be 2D")
+    if mask_array.max() == 0:
+        raise ValueError("Mask array must contain non-zero values")
+    if mask_array.max() == 1:
+        return [omero_rois.mask_from_binary_image(
+            binim=mask_array,
+            rgba=fill_color,
+            z=z_pos,
+            c=c_pos,
+            t=t_pos,
+            text=mask_name
+        )]
+    else:
+        return omero_rois.masks_from_label_image(
+            mask_array,
+            rgba=fill_color,
+            z=z_pos,
+            c=c_pos,
+            t=t_pos,
+            text=mask_name
+        )
+    # mask = model.MaskI()
+    # mask.setX(rtypes.rdouble(x_pos))
+    # mask.setY(rtypes.rdouble(y_pos))
+    # mask.setTheZ(rtypes.rint(z_pos))
+    # mask.setTheT(rtypes.rint(t_pos))
+    # mask.setWidth(rtypes.rdouble(mask_array.shape[0]))
+    # mask.setHeight(rtypes.rdouble(mask_array.shape[1]))
+    # mask.setFillColor(rtypes.rint(_rgba_to_int(*fill_color)))
+    # if mask_name:
+    #     mask.setTextValue(rtypes.rstring(mask_name))
+    # # mask_packed = np.packbits(mask_array)  # TODO: raise error when not boolean array
+    # # mask.setBytes(mask_packed.tobytes())
+    # # mask.setBytes(np.packbits(np.asarray(mask_array, dtype=int)))
+    # mask.setBytes(np.packbits(mask_array))
 
     return mask
 
