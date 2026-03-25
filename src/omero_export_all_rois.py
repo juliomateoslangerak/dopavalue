@@ -1,8 +1,6 @@
-import numpy as np
 import omero_toolbox as omero
 from getpass import getpass
 import sys
-from skimage import draw
 
 
 # Define variables
