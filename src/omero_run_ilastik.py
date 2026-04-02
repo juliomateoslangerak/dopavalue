@@ -367,7 +367,7 @@ if __name__ == '__main__':
                     )
                     points_ids.append(point_roi.getId()._val)
 
-                object_df["point_id"] = points_ids
+                object_df["roi"] = points_ids
 
                 # Save dataframes as csv attachments to the images
                 object_df.to_csv(f'{TEMP_DIR}/ch{object_ch[0]}_object_df.csv')
