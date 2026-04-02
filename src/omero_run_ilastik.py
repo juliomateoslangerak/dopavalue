@@ -365,7 +365,7 @@ if __name__ == '__main__':
                         shapes=[point],
                         name=f"label: {prop['label']}; area: {prop['area']}",
                     )
-                    points_ids.append(point_roi.getId())
+                    points_ids.append(point_roi.getId()._val)
 
                 object_df["point_id"] = points_ids
 
