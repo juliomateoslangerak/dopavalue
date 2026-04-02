@@ -227,7 +227,7 @@ if __name__ == '__main__':
         images = dataset.listChildren()
 
         images_names_ids = {i.getName(): i.getId() for i in images}
-        image_root_names = list(set([n[:-4] for n in images_names_ids.keys()]))
+        image_root_names = list({n[:-4] for n in images_names_ids})
 
         table_col_names = [
             'image_id',
