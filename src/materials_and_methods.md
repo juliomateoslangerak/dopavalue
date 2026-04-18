@@ -4,7 +4,7 @@ We manually predefined and extracted the different regions of interest to restri
 anatomical domains and to reduce the volume of data to analyze.
 We segmented fibers using Ilastik v1.4 (1) on mean intensity projections of the raw images while measurements were 
 taken on average intensity projections. A set of Python scripts was developed to orchestrate the segmentation, 
-extract measurements and data management using OMERO (2) as a data management backend. These scripts as well as the
+extract measurements and data management backenc using OMERO (2). These scripts as well as the
 detailed usage instructions can be found at https://github.com/juliomateoslangerak/dopavalue
 
 
